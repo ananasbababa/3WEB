@@ -63,10 +63,23 @@ img{
     justify-content: center;
 }
 
-#coverimage{
+#coverimage, .cardSpinner{
     height: 410px;
 }
 
+.cardSpinner{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.visible{
+    display:flex
+}
+
+.invisible{
+    display:none
+}
 #arrowsContent{
     margin-top:5%;
     margin-bottom:5%;

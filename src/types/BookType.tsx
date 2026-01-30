@@ -2,6 +2,11 @@
 export type BookType = {
     author_key:string,
     key:string,
-    author_name:string[]
+    author_name?:string[],
+    description:string|undefined,
+    title:string|undefined,
+    creationDate:string|undefined,
+    image:string|undefined,
+    datas:Object|null
 }
 
