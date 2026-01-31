@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Arrows from './components/Arrows'
 import BookDetails from './components/BookDetails'
@@ -15,7 +15,9 @@ const App = ()=>{
   const [loading, setLoading] = useState<boolean>(false)
   const [arrowsVisibles, setArrowsVisibles] = useState<boolean>(false)
   
-
+  useEffect(()=>{
+    console.log("book", book)
+  }, [book])
   return (
     <section className="App">
       <TopBar setBooks={setBooks} setLoading={setLoading} pageNumber={pageNumber} setArrowsVisibles={setArrowsVisibles}/>
@@ -24,8 +26,8 @@ const App = ()=>{
       <Routes>
         <Route path="/" element={<RecentChanges/>}></Route>
         <Route path="/deep-search">Advanced search</Route>
-        <Route path="/quick-search" element={<QuickSearch books={books} setBook = {setBook}/>}></Route>
-        <Route path="/book-details" element={<BookDetails book={book}/>}></Route>
+        <Route path="/quick-search" element={<QuickSearch books={books} setBook = {setBook} setArrowsVisibles={setArrowsVisibles}/>}></Route>
+        <Route path="/book-details" element={<BookDetails theBook={book}/>}></Route>
       </Routes>
 
       {loading &&

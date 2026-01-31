@@ -63,14 +63,21 @@ img{
     justify-content: center;
 }
 
-#coverimage, .cardSpinner{
+.bigImage{
     height: 410px;
+}
+
+#coverimage{
+    z-index: 900;
 }
 
 .cardSpinner{
     display: flex;
     align-items: center;
     justify-content: center;
+    height:88%;
+    position:absolute;
+    width:100%
 }
 
 .visible{
@@ -91,4 +98,50 @@ img{
 
 p{
     margin:0px;
+}
+
+#bookPresentation{
+    display:flex;
+    width:100%;
+}
+
+#bookPresentation>img{
+    width:30%
+}
+
+#titleDescription{
+    width:70%;
+    padding: 4% 2% 4% 2%;
+    
+}
+
+#titleDescription>h1{
+    margin-bottom: 4%;
+}
+
+#authors{
+    display: flex;
+    justify-content: center;
+    align-items: row;
+}
+
+
+.smallCard{
+    width: 14rem;
+}
+
+.smallImage{
+    height:auto !important;
+}
+
+#authors{
+    width: 100%;
+    justify-content: flex-start;
+
+}
+
+
+.title{
+    margin-left: 1%;
+    margin-top: 10%;
 }

@@ -1,6 +1,6 @@
 import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import icone from '../assets/bibliotheque.png';
 import api from '../config/api';
 import '../styles/App.scss';
@@ -22,6 +22,7 @@ const TopBar = ({setBooks, setLoading, setArrowsVisibles, pageNumber}:TopBarProp
 
   const [searchItem, setSearchItem] = useState<string>("")
   const [error, setError] = useState<string>("")
+  const navigate = useNavigate()
 
   useEffect(()=>{
     if(searchItem.length>0){
@@ -42,8 +43,8 @@ const TopBar = ({setBooks, setLoading, setArrowsVisibles, pageNumber}:TopBarProp
         setError(err.message)
       }
     } finally{
-      setLoading(false)
-      document.getElementById("quickSearchLink")?.click()
+      setLoading(false)      
+      navigate("/quick-search")
     }
   }
 
@@ -54,7 +55,6 @@ const TopBar = ({setBooks, setLoading, setArrowsVisibles, pageNumber}:TopBarProp
           <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
         {error && <div>{error}</div>}
-        <Link to="/quick-search" id="quickSearchLink"></Link>
       </nav>
 
 }

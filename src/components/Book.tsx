@@ -1,12 +1,12 @@
 import { isAxiosError } from "axios";
-import { useEffect, useRef, useState } from "react";
-import icone from '../assets/bibliotheque.png';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../config/api";
 import type { BookType } from "../types/BookType";
-
 type BookProps = {
     book : BookType,
-    setBook : (book:BookType)=>void
+    setBook : (book:BookType)=>void,
+    setArrowsVisibles : (visible:boolean)=>void
 }
 
 type ResponseType = {
@@ -15,7 +15,7 @@ type ResponseType = {
     authors:[
         {
             author:{
-                key:string
+                key:string[]
             }
         }
     ],
@@ -25,16 +25,14 @@ type ResponseType = {
     covers:number[]
 }
 
-const Book = ({book, setBook} : BookProps) =>{
+const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
 
     const [description, setDescription] = useState<string>("")
     const [title, setTitle] = useState<string>("")
     const [creationDate, setCreationDate] = useState<string>("")
     const [image, setImage] = useState<string|undefined>(undefined)
-    const [imgShow, setImgShow] = useState<boolean>(false)
-    const imgRef = useRef<HTMLImageElement>(null);
-    const completed : Boolean = Boolean(imgRef.current?.complete);
     const [completeDatas, setCompleteDatas] = useState<Object|null>(null)
+    const navigate = useNavigate()
 
     useEffect(()=>{
         console.log(book.key);
@@ -69,16 +67,15 @@ const Book = ({book, setBook} : BookProps) =>{
         book.creationDate=creationDate
         book.image=image
         book.datas = completeDatas
-
         setBook(book)
-
-        window.location.href='/book-details'
+        navigate("/book-details")
+        setArrowsVisibles(false)
     }
 
     return (
         <div className="card bg-light">
-            <img id="coverimage" ref={imgRef} src={image} onProgress={()=>setImgShow(false)} onError= {()=>setImage(icone)} className={"card-img-top "+((completed == true || imgShow == true)?"visible":"invisible")} alt="..."/>
-            <div className={"cardSpinner "+((completed == true || imgShow == true)?"invisible":"visible")}>
+            <img id="coverimage" src={image} className="card-img-top bigImage" alt="..."/>
+            <div className="cardSpinner     ">
                 <div className="spinner-grow" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </div>
