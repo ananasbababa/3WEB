@@ -19,11 +19,12 @@ const Author  = ({author_key}:AuthorProps) => {
     const [author, setAuthor] = useState<AuteurType|undefined>()
     const [image, setImage] = useState<string|undefined>(undefined)
     
-    useEffect(()=> {
+    useEffect( ()=> {
         api.get<AuthorResponse>("authors/"+author_key+".json")
             .then((res)=>{
                 let lien="https://covers.openlibrary.org/a/id/"+res.data?.photos?.[1]+"-M.jpg"
                 let newAuthor:AuteurType = {
+                    key:author_key,
                     name:res.data.personal_name,
                     photo:lien,
                     birth_date:res.data.birth_date,
@@ -31,7 +32,11 @@ const Author  = ({author_key}:AuthorProps) => {
                 }
 
                 setAuthor(newAuthor)
-                setImage(lien)
+                if(res.data?.photos?.[1]==undefined){
+                    setImage(icone)
+                }else{
+                    setImage(lien)
+                }
             })
     }, [author_key])
 
@@ -40,7 +45,7 @@ const Author  = ({author_key}:AuthorProps) => {
     }, [author])
     return (
         <div className="card smallCard">
-            <img id="coverimage" src={image} onError= {()=>setImage(icone)} className="card-img-top smallImage" alt="..."/>
+            <img id="coverimage" src={image}  className="card-img-top smallImage" alt="..."/>
             <div className="cardSpinner">
                 <div className="spinner-grow" role="status">
                     <span className="visually-hidden">Loading...</span>

@@ -35,7 +35,8 @@ const TopBar = ({setBooks, setLoading, setArrowsVisibles, pageNumber}:TopBarProp
     setArrowsVisibles(true)
     setLoading(true)
     try{
-      const response = await api.get<ResponseType>("search.json?q='"+searchItem+"'&fields=key,author_key,author_name&limit=10&page="+pageNumber)
+      const response = await api.get<ResponseType>("search.json?q='"+searchItem+"'&fields=key,author_key,author_name,edition_key&limit=10&page="+pageNumber)
+      console.log("BOOK", response.data.docs[7].edition_key);
       
       setBooks(response.data.docs)
     } catch(err:unknown){
@@ -43,7 +44,7 @@ const TopBar = ({setBooks, setLoading, setArrowsVisibles, pageNumber}:TopBarProp
         setError(err.message)
       }
     } finally{
-      setLoading(false)      
+      setLoading(false)
       navigate("/quick-search")
     }
   }

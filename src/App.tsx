@@ -16,8 +16,8 @@ const App = ()=>{
   const [arrowsVisibles, setArrowsVisibles] = useState<boolean>(false)
   
   useEffect(()=>{
-    console.log("book", book)
-  }, [book])
+    console.log("book", books)
+  }, [books])
   return (
     <section className="App">
       <TopBar setBooks={setBooks} setLoading={setLoading} pageNumber={pageNumber} setArrowsVisibles={setArrowsVisibles}/>

@@ -7,6 +7,7 @@ export type BookType = {
     title:string|undefined,
     creationDate:string|undefined,
     image:string|undefined,
-    datas:Object|null
+    subjects:string[],
+    edition_key:string[],
 }
 

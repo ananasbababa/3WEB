@@ -1,8 +1,10 @@
 import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import icone from '../assets/bibliotheque.png';
 import api from "../config/api";
 import type { BookType } from "../types/BookType";
+
 type BookProps = {
     book : BookType,
     setBook : (book:BookType)=>void,
@@ -22,7 +24,9 @@ type ResponseType = {
     created:{
         value:string
     },
-    covers:number[]
+    covers:number[],
+    subjects:string[],
+    edition_key:string[]
 }
 
 const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
@@ -30,28 +34,30 @@ const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
     const [description, setDescription] = useState<string>("")
     const [title, setTitle] = useState<string>("")
     const [creationDate, setCreationDate] = useState<string>("")
-    const [image, setImage] = useState<string|undefined>(undefined)
-    const [completeDatas, setCompleteDatas] = useState<Object|null>(null)
+    const [image, setImage] = useState<string>("")
+    const [subjects, setSubjects] = useState<string[]>([])
     const navigate = useNavigate()
 
     useEffect(()=>{
-        console.log(book.key);
+        console.log("book.key");
         
         api.get<ResponseType>(book.key+".json")
             .then(async response=>{
+                // console.log("publishDate response", response.data);
+
                 const d = (typeof response.data.description == "string"? response.data.description : response.data.description?.value )?? ""
-                setCompleteDatas(response.data)
                 setDescription(d)
-
                 setTitle(response.data.title?.trim() || "BLABLA")
-
                 const date= new Date(response.data.created.value);
                 var day = (date.getDay()<10)?"0"+date.getDay():date.getDay()
                 var month = (date.getMonth()<10)?"0"+date.getMonth():date.getMonth()
                 setCreationDate(day+"/"+month+"/"+date.getFullYear())
-
-                setImage("https://covers.openlibrary.org/b/id/"+response.data.covers?.[0]+"-M.jpg")
-
+                setSubjects(response.data.subjects)
+                if(response.data.covers?.[0] == undefined){
+                    setImage(icone)
+                }else{
+                    setImage("https://covers.openlibrary.org/b/id/"+response.data.covers?.[0]+"-M.jpg")
+                }
             })
             .catch(err=>{
                 if(isAxiosError(err)){
@@ -66,12 +72,11 @@ const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
         book.description=description
         book.creationDate=creationDate
         book.image=image
-        book.datas = completeDatas
+        book.subjects=subjects
         setBook(book)
         navigate("/book-details")
         setArrowsVisibles(false)
     }
-
     return (
         <div className="card bg-light">
             <img id="coverimage" src={image} className="card-img-top bigImage" alt="..."/>
