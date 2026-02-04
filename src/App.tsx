@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Arrows from './components/Arrows'
 import BookDetails from './components/BookDetails'
 import Loading from './components/Loading'
 import TopBar from './components/TopBar'
-import QuickSearch from './pages/QuickSearch'
+import DetailedSearch from './pages/DetailedSearch'
 import RecentChanges from './pages/RecentChanges'
 import type { BookType } from './types/BookType'
 const App = ()=>{
@@ -15,27 +15,21 @@ const App = ()=>{
   const [loading, setLoading] = useState<boolean>(false)
   const [arrowsVisibles, setArrowsVisibles] = useState<boolean>(false)
   
-  useEffect(()=>{
-    console.log("book", books)
-  }, [books])
   return (
     <section className="App">
-      <TopBar setBooks={setBooks} setLoading={setLoading} pageNumber={pageNumber} setArrowsVisibles={setArrowsVisibles}/>
+      <TopBar setBooks={setBooks} setBook={setBook} setLoading={setLoading} setArrowsVisibles={setArrowsVisibles}/>
       <section id = "content">
 
       <Routes>
-        <Route path="/" element={<RecentChanges/>}></Route>
-        <Route path="/deep-search">Advanced search</Route>
-        <Route path="/quick-search" element={<QuickSearch books={books} setBook = {setBook} setArrowsVisibles={setArrowsVisibles}/>}></Route>
-        <Route path="/book-details" element={<BookDetails theBook={book}/>}></Route>
+        <Route path="/" element={<RecentChanges setLoading={setLoading} setBook={setBook}/>}></Route>
+        <Route path="/detailed-search/:query" element={<DetailedSearch books={books} setBook = {setBook} setArrowsVisibles={setArrowsVisibles} setLoading = {setLoading} pageNumber={pageNumber}/>}></Route>
+        <Route path="/book-details" element={<BookDetails theBook={book} setLoading={setLoading} />}></Route>
       </Routes>
 
-      {loading &&
-        <Loading></Loading>
-      }
+      <Loading show={loading}></Loading>
 
 
-      {arrowsVisibles &&
+      {arrowsVisibles==true &&
         <Arrows pageNumber={pageNumber} setPageNumber={setPageNumber}></Arrows>
       }
       </section>

@@ -1,7 +1,6 @@
-import { isAxiosError } from "axios"
+import axios, { isAxiosError } from "axios"
 import { useEffect, useState } from "react"
 import icone from '../assets/bibliotheque.png'
-import api from "../config/api"
 import type { EditionType } from "../types/EditionType"
 
 type EditionResponse = {
@@ -19,14 +18,6 @@ type EditionResponse = {
     publishers:string[],
 }
 
-type AuthorResponse = {
-    personal_name:string
-}
-
-type LanguageReponse = {
-    name:string
-}
-
 type EditionProps = {
     edition_key:string
 }
@@ -35,10 +26,8 @@ const Edition  = ({edition_key}:EditionProps) => {
     const [edition, setEdition] = useState<EditionType>()
     const [image, setImage] = useState<string>("")
     useEffect(()=> {
-        api.get<EditionResponse>("books/"+edition_key+".json")
+        axios.get<EditionResponse>("/openlibrary/books/"+edition_key+".json")
             .then((res)=>{
-                console.log("EDITION response", res.data);
-                
                 let lien="https://covers.openlibrary.org/a/id/"+res.data?.covers?.[0]+"-M.jpg"
                 let newEdition:EditionType = {
                     image:lien,
@@ -48,11 +37,12 @@ const Edition  = ({edition_key}:EditionProps) => {
                     publishers:res.data.publishers,
                 }
 
-                setEdition(newEdition)
-
                 if(res.data?.covers?.[0] == undefined){
                     setImage(icone)
+                }else{
+                    setImage(lien)
                 }
+                setEdition(newEdition)
             })
             .catch(err=>{
                 if(isAxiosError(err)){
@@ -61,9 +51,6 @@ const Edition  = ({edition_key}:EditionProps) => {
             })
     }, [edition_key])
 
-    useEffect(()=>{
-        console.log("edition", edition)
-    }, [edition])
     return (
         <div className="card smallCard">
             <img id="coverimage" src={image == ""?edition?.image:image} className="card-img-top smallImage" alt="..."/>

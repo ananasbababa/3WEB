@@ -1,7 +1,7 @@
 export type AuteurType = {
-    name:string,
-    photo:string,
-    birth_date:string,
-    death_date:string,
+    name:string|undefined,
+    photo:string|undefined,
+    birth_date:string|undefined,
+    death_date:string|undefined,
     key:string
 }

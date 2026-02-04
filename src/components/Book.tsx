@@ -1,8 +1,7 @@
-import { isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import icone from '../assets/bibliotheque.png';
-import api from "../config/api";
 import type { BookType } from "../types/BookType";
 
 type BookProps = {
@@ -26,38 +25,53 @@ type ResponseType = {
     },
     covers:number[],
     subjects:string[],
-    edition_key:string[]
+    edition_key:string[],
+    links:{
+        title:string,
+        url:string
+    }[]
 }
 
 const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
 
+    
     const [description, setDescription] = useState<string>("")
-    const [title, setTitle] = useState<string>("")
     const [creationDate, setCreationDate] = useState<string>("")
     const [image, setImage] = useState<string>("")
     const [subjects, setSubjects] = useState<string[]>([])
+    const [lien, setLien] = useState<string>("")
     const navigate = useNavigate()
 
     useEffect(()=>{
-        console.log("book.key");
-        
-        api.get<ResponseType>(book.key+".json")
+
+        if(book.cover_i != undefined || book.cover_i != ""){
+            setImage("https://covers.openlibrary.org/b/id/"+book.cover_i+"-M.jpg")
+        }
+
+        axios.get<ResponseType>("/openlibrary"+book.key+".json")
             .then(async response=>{
-                // console.log("publishDate response", response.data);
 
                 const d = (typeof response.data.description == "string"? response.data.description : response.data.description?.value )?? ""
                 setDescription(d)
-                setTitle(response.data.title?.trim() || "BLABLA")
+                // setTitle(response.data.title?.trim())
                 const date= new Date(response.data.created.value);
-                var day = (date.getDay()<10)?"0"+date.getDay():date.getDay()
+                var day = (date.getDate()<10)?"0"+date.getDate():date.getDate()
                 var month = (date.getMonth()<10)?"0"+date.getMonth():date.getMonth()
                 setCreationDate(day+"/"+month+"/"+date.getFullYear())
                 setSubjects(response.data.subjects)
-                if(response.data.covers?.[0] == undefined){
-                    setImage(icone)
-                }else{
-                    setImage("https://covers.openlibrary.org/b/id/"+response.data.covers?.[0]+"-M.jpg")
+                if(image == ""){
+                    if(response.data.covers?.[0] == undefined){
+                        setImage(icone)
+                    }else{
+                        if(response.data.covers?.[0] != -1){
+                            setImage("https://covers.openlibrary.org/b/id/"+response.data.covers?.[0]+"-M.jpg")
+                        }else{
+                            setImage(icone)
+                        }
+                    }
                 }
+                let linkObject = response.data.links.find((l)=>l.title.startsWith("Wikipedia") )
+                setLien(linkObject?.url ?? "")
             })
             .catch(err=>{
                 if(isAxiosError(err)){
@@ -68,11 +82,11 @@ const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
     }, [book.key])
     
     const openDetails = () => {
-        book.title=title
         book.description=description
         book.creationDate=creationDate
-        book.image=image
+        book.cover_i=image
         book.subjects=subjects
+        book.wiki_lien=lien
         setBook(book)
         navigate("/book-details")
         setArrowsVisibles(false)
@@ -86,7 +100,7 @@ const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
                 </div>
             </div>
             <div className="card-body">
-                <h5 className="card-title">{title}</h5>
+                <h5 className="card-title">{book.title}</h5>
                 <p className="card-text">{description.substring(0, 100)+"..."}</p>
             </div>
             <ul className="list-group list-group-flush">

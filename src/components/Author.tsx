@@ -1,6 +1,6 @@
+import axios from "axios"
 import { useEffect, useState } from "react"
 import icone from "../assets/bibliotheque.png"
-import api from "../config/api"
 import type { AuteurType } from "../types/AuteurType"
 
 type AuthorResponse = {
@@ -8,7 +8,8 @@ type AuthorResponse = {
     bio:string,
     birth_date:string,
     death_date:string,
-    personal_name:string
+    personal_name:string,
+    name:string
 }
 
 type AuthorProps = {
@@ -20,12 +21,13 @@ const Author  = ({author_key}:AuthorProps) => {
     const [image, setImage] = useState<string|undefined>(undefined)
     
     useEffect( ()=> {
-        api.get<AuthorResponse>("authors/"+author_key+".json")
-            .then((res)=>{
+        
+        axios.get<AuthorResponse>("/openlibrary/authors/"+author_key+".json")
+        .then((res)=>{
                 let lien="https://covers.openlibrary.org/a/id/"+res.data?.photos?.[1]+"-M.jpg"
                 let newAuthor:AuteurType = {
                     key:author_key,
-                    name:res.data.personal_name,
+                    name:res.data.personal_name ?? res.data.name,
                     photo:lien,
                     birth_date:res.data.birth_date,
                     death_date:res.data.death_date,
@@ -38,11 +40,11 @@ const Author  = ({author_key}:AuthorProps) => {
                     setImage(lien)
                 }
             })
-    }, [author_key])
-
-    useEffect(()=>{
-        console.log(author)
     }, [author])
+
+    // useEffect(()=>{
+    //     console.log("BOOOKDETAILS final author", author)
+    // }, [author])
     return (
         <div className="card smallCard">
             <img id="coverimage" src={image}  className="card-img-top smallImage" alt="..."/>

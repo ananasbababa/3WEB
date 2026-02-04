@@ -28,11 +28,14 @@ img{
 
 #loading{
     background-color: #0000001a;
-    display:flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     height: 79vh;
     z-index: 100;
+    width: 100%;
+    position: fixed;
+    top: 21%;
 }
 
 #content{
@@ -56,11 +59,17 @@ img{
     margin:2%;
 }
 
-#searchSection{
+#searchSection>.content{
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+#searchSection>.content>form{
+    width: 100%;
+    padding: 3%;
+    padding-top:0%;
 }
 
 .bigImage{
@@ -190,4 +199,40 @@ p{
 
 .caracValue{
     font-size:20px
+}
+
+.quickSearch{
+    display: flex;
+    flex-direction: column;
+    top: 19%;
+    position: fixed;
+    width: 70%;
+    margin-right: 83px;
+    max-height: 50%;
+    overflow-y: scroll;
+}
+
+.quickSearch>section>li>a{
+    display: flex;
+    flex-direction: row;
+}
+.ecriture{
+    padding-left: 1%;
+    padding-top: 1%;
+}
+
+.carouselImgDiv>img{
+    height: 65vh;
+}
+
+.carouselImgDiv{
+        height: 79vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: grey;
+}
+
+a{
+    cursor: pointer;
 }
