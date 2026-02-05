@@ -32,7 +32,7 @@ img{
     align-items: center;
     justify-content: center;
     height: 79vh;
-    z-index: 100;
+    z-index: 1100;
     width: 100%;
     position: fixed;
     top: 21%;
@@ -222,11 +222,11 @@ p{
 }
 
 .carouselImgDiv>img{
-    height: 65vh;
+    height: 55vh;
 }
 
 .carouselImgDiv{
-        height: 79vh;
+        height: 71vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;

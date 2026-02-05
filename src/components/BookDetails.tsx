@@ -1,5 +1,6 @@
 import axios, { isAxiosError } from "axios"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import icone from '../assets/bibliotheque.png'
 import type { BookType } from "../types/BookType"
 import Author from "./Author"
@@ -33,7 +34,10 @@ type ResponseType = {
 
 
 const BookDetails = ({theBook, setLoading}:BookDetailsProps)=>{
-
+    const navigate = useNavigate()
+    if(theBook == undefined){
+        navigate("/")
+    }
     const [authorsOpen, setAuthorsOpen] = useState<boolean>(false)
     const [editionsOpen, setEditionsOpen] = useState<boolean>(false)
     const [wLink, setWLink] = useState<string>(theBook?.wiki_lien ?? "")

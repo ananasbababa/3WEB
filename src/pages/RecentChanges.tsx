@@ -36,18 +36,20 @@ const RecentChanges = ({setLoading, setBook}:RecentChangesProps) => {
     }, [])
 
     return (
+        <section>
 
+                    <h5 className="display-5 text-center">Ajouts Récents</h5>
             <div id="carouselExampleCaptions" className="carousel slide">
                 <div className="carousel-indicators">
                     {books.map((book, index)=>(
-                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" className={(active == index?"active":"")} aria-current="true" aria-label={"Slide "+index}></button>
+                        <button key = {index} type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" className={(active == index?"active":"")} aria-current="true" aria-label={"Slide "+index}></button>
                     ))
                     }
                 </div>
                 <div className="carousel-inner">
                     {books.map((book, index)=>(
                             <div className={"carousel-item "+(active == index?"active":"")} key={book.key+"-"+index}>
-                                <a onClick={()=>{setBook(book);navigate("/book-details")}}>
+                                <a onClick={()=>{setLoading(true);setBook(book);navigate("/book-details")}}>
                                     <div  className={"w-100 carouselImgDiv"}>
                                         <img src={(book.cover_i==undefined ? icone : "https://covers.openlibrary.org/b/id/"+book.cover_i+"-M.jpg")} className="d-block" alt="..."/>
                                     </div>
@@ -72,6 +74,7 @@ const RecentChanges = ({setLoading, setBook}:RecentChangesProps) => {
                     </button>
                 </div>
             </div>
+        </section>
     )
 }
 
