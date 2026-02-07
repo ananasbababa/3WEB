@@ -7,7 +7,7 @@ type SubjectProps = {
 const Subject = ({subject}:SubjectProps) =>{
     const navigate = useNavigate()
     return (
-        <button type="button" className="btn btn-light subjectButton" onClick={()=>{navigate("/detailed-search/subject:"+subject)}}>{subject}</button>
+        <button type="button" data-cy="subject-item" className="btn btn-light subjectButton" onClick={()=>{navigate("/detailed-search/subject:"+subject)}}>{subject}</button>
     )
 }
 

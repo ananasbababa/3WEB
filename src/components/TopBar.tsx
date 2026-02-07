@@ -5,9 +5,7 @@ import icone from '../assets/bibliotheque.png';
 import '../styles/App.scss';
 import type { BookType } from '../types/BookType';
 
-
 type TopBarProps = {
-  setBooks : (books:BookType[])=>void,
   setBook : (book:BookType)=>void,
   setLoading : (loading:boolean)=>void,
   setArrowsVisibles : (visible:boolean)=>void
@@ -28,7 +26,13 @@ const TopBar = ({setBook, setLoading, setArrowsVisibles}:TopBarProps) =>{
   
 
   useEffect(()=> {
-    quickySearch(null)
+    const timer = setTimeout(() => {
+      if(searchItem.trim() != ""){
+        quickySearch(null)
+      }
+    }, 500);
+
+    return ()=>clearTimeout(timer)
   }, [searchItem])
 
   const quickySearch = async (e: React.ChangeEvent<HTMLInputElement> |null)=>{
@@ -67,7 +71,7 @@ const TopBar = ({setBook, setLoading, setArrowsVisibles}:TopBarProps) =>{
           <input className="form-control mr-sm-2 searchInput" type="text" onChange = {(e)=>{setSearchItem(e.target.value);}} placeholder="Search" aria-label="Search"/>
           <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
-        <ul className={"dropdown-menu quickSearch "+(showQuickResult==true?"visible":"invisible")}>
+        <ul className={"dropdown-menu quickSearch "+(showQuickResult==true?"show visible":"invisible")}>
           {
             quickSearchBooks.map((book, index)=>(
               <section key={book.key+"-"+index}>

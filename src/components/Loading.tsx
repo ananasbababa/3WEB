@@ -1,3 +1,4 @@
+
 type LoadingProps = {
   show:boolean
 }
@@ -17,6 +18,5 @@ const Loading = ({show}:LoadingProps) =>{
         </div>
     )
 }
-
 
 export default Loading

@@ -18,7 +18,7 @@ type AuthorProps = {
 
 const Author  = ({author_key}:AuthorProps) => {
     const [author, setAuthor] = useState<AuteurType|undefined>()
-    const [image, setImage] = useState<string|undefined>(undefined)
+    const [image, setImage] = useState<string|undefined>("/fallback.png")
     
     useEffect( ()=> {
         
@@ -40,13 +40,10 @@ const Author  = ({author_key}:AuthorProps) => {
                     setImage(lien)
                 }
             })
-    }, [author])
+    }, [author_key])
 
-    // useEffect(()=>{
-    //     console.log("BOOOKDETAILS final author", author)
-    // }, [author])
     return (
-        <div className="card smallCard">
+        <div className="card smallCard" data-cy="author-item">
             <img id="coverimage" src={image}  className="card-img-top smallImage" alt="..."/>
             <div className="cardSpinner">
                 <div className="spinner-grow" role="status">

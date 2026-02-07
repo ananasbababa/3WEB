@@ -37,7 +37,7 @@ const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
     
     const [description, setDescription] = useState<string>("")
     const [creationDate, setCreationDate] = useState<string>("")
-    const [image, setImage] = useState<string>("")
+    const [image, setImage] = useState<string>("/fallback.png")
     const [subjects, setSubjects] = useState<string[]>([])
     const [lien, setLien] = useState<string>("")
     const navigate = useNavigate()
@@ -99,7 +99,7 @@ const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
                     <span className="visually-hidden">Loading...</span>
                 </div>
             </div>
-            <div className="card-body">
+            <div className="card-body" data-cy="book-item">
                 <h5 className="card-title">{book.title}</h5>
                 <p className="card-text">{description.substring(0, 100)+"..."}</p>
             </div>

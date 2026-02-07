@@ -90,7 +90,7 @@ img{
 }
 
 .visible{
-    display:flex
+    display:flex;
 }
 
 .invisible{
@@ -210,6 +210,7 @@ p{
     margin-right: 83px;
     max-height: 50%;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .quickSearch>section>li>a{

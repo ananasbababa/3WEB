@@ -10,7 +10,6 @@ import type { AuteurType } from "../types/AuteurType";
 import type { SubjectType } from "../types/SubjectType";
 
 type DetailedSearchProps = {
-    books:BookType[] | null,
     setBook:(book:BookType)=>void,
     setArrowsVisibles:(visible:boolean)=>void,
     setLoading:(loading:boolean)=>void,
@@ -123,29 +122,36 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
             <nav className="navbar">
                 <form className="container-fluid justify-content-center">
                     <button type="button" className={"btn "+ (show=="books"?"btn-success":"btn-light") +" subjectButton"} onClick={()=>{setShow("books");}}>Livres</button>
-                    <button type="button" className={"btn "+ (show=="authors"?"btn-success":"btn-light") +" subjectButton"}  onClick={()=>{setShow("authors");}}>Auteur</button>
+                    <button type="button" className={"btn "+ (show=="authors"?"btn-success":"btn-light") +" subjectButton"}  onClick={()=>{setShow("authors");}}>Auteurs</button>
                     <button type="button" className={"btn "+ (show=="subjects"?"btn-success":"btn-light") +" subjectButton"}  onClick={()=>{setShow("subjects");}}>Thèmes</button>
                     <button type="button" className={"btn "+ (show=="deepSearch"?"btn-success":"btn-light") +" subjectButton"}  onClick={()=>{setShow("deepSearch");}}>Recherche avancée</button>
                 </form>
             </nav>
             <section className="content">
-                {show == "books" && books.map((book, index)=>(
-                    <Book book = {book} key={index+"-"+book.key} setBook={setBook} setArrowsVisibles={setArrowsVisibles}></Book>
-                ))}
+                <div data-cy="books-list">
+                    {show == "books" && books.map((book, index)=>(
+                        <Book book = {book} key={index+"-"+book.key} setBook={setBook} setArrowsVisibles={setArrowsVisibles}></Book>
+                    ))}
 
+                </div>
+
+                <div data-cy="authors-list">
                 {
                     show == "authors" && authors.map((author, index)=>(
                     <Author author_key = {author.key} key={index+"-"+author.key}/>
                 ))}
+                </div>
 
+                <div data-cy="subjects-list">
                 {
                     show == "subjects" && subjects?.map( (subject, index)=>(
                     <Subject key={subject+"-"+index} subject={subject.name}/>
                 ))}
+                </div>
 
                 {
                     show == "deepSearch" && <form>
-                        <div className="mb-3">
+                        <div className="mb-3" data-cy="deepSearchTitle">
                             <label htmlFor="inputTitre" className="form-label">Titre</label>
                             <input type="text" onChange={(e)=>setTitleQuery(e.target.value)} className="form-control" id="inputTitre" aria-describedby="titreHelp"/>
                             <div id="titreHelp" className="form-text">Titre du livre recherché</div>
@@ -180,7 +186,7 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
                             <input type="text" onChange={(e)=>setEditorQuery(e.target.value)} className="form-control" id="inputEditor" aria-describedby="editorHelp"/>
                             <div id="editorHelp" className="form-text">Éditeur recherché</div>
                         </div>
-                        <button onClick={(e)=>detailledSearch(e)} className="btn btn-outline-success my-2 my-sm-0">Search</button>
+                        <button onClick={(e)=>detailledSearch(e)} className="btn btn-outline-success my-2 my-sm-0" data-cy="submitDeepSearch">Search</button>
                     </form>
                 }
             </section>

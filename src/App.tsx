@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import Arrows from './components/Arrows'
 import BookDetails from './components/BookDetails'
 import Loading from './components/Loading'
@@ -8,7 +8,7 @@ import DetailedSearch from './pages/DetailedSearch'
 import RecentChanges from './pages/RecentChanges'
 import type { BookType } from './types/BookType'
 const App = ()=>{
-
+  const navigate = useNavigate();
   const [books, setBooks] = useState<BookType[]>([])
   const [book, setBook] = useState<BookType>()
   const [pageNumber, setPageNumber] = useState<number>(1)
