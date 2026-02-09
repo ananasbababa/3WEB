@@ -16,15 +16,18 @@ type EditionResponse = {
     title:string,
     publish_date:string,
     publishers:string[],
+    ocaid:string
 }
 
 type EditionProps = {
-    edition_key:string
+    edition_key:string,
+    setError:(error:string)=>void
 }
 
-const Edition  = ({edition_key}:EditionProps) => {
+const Edition  = ({edition_key, setError}:EditionProps) => {
     const [edition, setEdition] = useState<EditionType>()
     const [image, setImage] = useState<string>("")
+    const [audioBookLink, setAudioBookLink] = useState<string>("")
     useEffect(()=> {
         axios.get<EditionResponse>("/openlibrary/books/"+edition_key+".json")
             .then((res)=>{
@@ -42,17 +45,22 @@ const Edition  = ({edition_key}:EditionProps) => {
                 }else{
                     setImage(lien)
                 }
+
+                if(res.data.ocaid != undefined){
+                    setAudioBookLink("https://archive.org/details/"+res.data.ocaid)
+                }
+                
                 setEdition(newEdition)
             })
             .catch(err=>{
                 if(isAxiosError(err)){
-                    console.log(err.message)
+                    setError(err.message)
                 }
             })
     }, [edition_key])
 
     return (
-        <div className="card smallCard">
+        <div className="card smallCard" data-cy="edition-item">
             <img id="coverimage" src={image == ""?edition?.image:image} className="card-img-top smallImage" alt="..."/>
             <div className="cardSpinner">
                 <div className="spinner-grow" role="status">
@@ -64,6 +72,10 @@ const Edition  = ({edition_key}:EditionProps) => {
                 <p className="card-text"><u>Editeurs :</u> {edition?.publishers}</p>
                 <p className="card-text"><u>Date de publication :</u> {edition?.publishDate}</p>
                 <p className="card-text"><u>Nombre de pages :</u> {edition?.nbPages ?? "-"}</p>
+                {
+                    audioBookLink != "" && <p className="card-text"><u>Lire ou écouter le livre :</u> <a href="">{audioBookLink}</a></p>
+                }
+                
             </div>
         </div>
     )

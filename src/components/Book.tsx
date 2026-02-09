@@ -37,7 +37,7 @@ const Book = ({book, setBook, setArrowsVisibles} : BookProps) =>{
     
     const [description, setDescription] = useState<string>("")
     const [creationDate, setCreationDate] = useState<string>("")
-    const [image, setImage] = useState<string>("/fallback.png")
+    const [image, setImage] = useState<string>("")
     const [subjects, setSubjects] = useState<string[]>([])
     const [lien, setLien] = useState<string>("")
     const navigate = useNavigate()

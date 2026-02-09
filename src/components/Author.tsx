@@ -13,10 +13,11 @@ type AuthorResponse = {
 }
 
 type AuthorProps = {
-    author_key:string
+    author_key:string,
+    setError:(error:string)=>void
 }
 
-const Author  = ({author_key}:AuthorProps) => {
+const Author  = ({author_key, setError}:AuthorProps) => {
     const [author, setAuthor] = useState<AuteurType|undefined>()
     const [image, setImage] = useState<string|undefined>("/fallback.png")
     
@@ -39,6 +40,9 @@ const Author  = ({author_key}:AuthorProps) => {
                 }else{
                     setImage(lien)
                 }
+            })
+            .catch((err)=>{
+                setError(err.message)
             })
     }, [author_key])
 

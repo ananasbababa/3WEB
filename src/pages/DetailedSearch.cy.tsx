@@ -11,6 +11,7 @@ describe('<DetailedSearch />', () => {
     const setBook = cy.stub()
     const setArrowsVisibles = cy.stub()
     const setLoading = cy.stub()
+    const setError = cy.stub()
     const pageNumber = 1
     
     window.history.pushState({}, "", "/detailed-search/Test")
@@ -19,13 +20,13 @@ describe('<DetailedSearch />', () => {
         <Routes>
           <Route 
             path='/detailed-search/:query'
-            element={<DetailedSearch pageNumber={pageNumber} setBook={setBook} setLoading={setLoading} setArrowsVisibles={setArrowsVisibles}/>}
+            element={<DetailedSearch setError={setError} pageNumber={pageNumber} setBook={setBook} setLoading={setLoading} setArrowsVisibles={setArrowsVisibles}/>}
           />
         </Routes>
       </BrowserRouter>
     )
 
-    return {setBook, setLoading, setArrowsVisibles, pageNumber}
+    return {setBook, setLoading, setArrowsVisibles, setError, pageNumber}
   }
 
   beforeEach(()=>{

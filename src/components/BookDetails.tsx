@@ -8,7 +8,8 @@ import Edition from "./Edition"
 import Subject from "./Subject"
 type BookDetailsProps = {
     theBook:BookType|undefined,
-    setLoading:(loading:boolean)=>void
+    setLoading:(loading:boolean)=>void,
+    setError:(message:string)=>void
 }
 
 type WikiResponse = {
@@ -33,11 +34,16 @@ type ResponseType = {
 }
 
 
-const BookDetails = ({theBook, setLoading}:BookDetailsProps)=>{
+const BookDetails = ({theBook, setLoading, setError}:BookDetailsProps)=>{
     const navigate = useNavigate()
     useEffect(()=>{
         if(theBook == undefined){
             navigate("/")
+        }else{
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
         }
     }, [theBook])
     const [authorsOpen, setAuthorsOpen] = useState<boolean>(false)
@@ -84,7 +90,7 @@ const BookDetails = ({theBook, setLoading}:BookDetailsProps)=>{
                 })
                 .catch((err)=>{
                     if(isAxiosError(err)){
-                        console.log("Err : ", err.message)
+                        setError(err.message)
                     }
                 })
             }
@@ -114,11 +120,10 @@ const BookDetails = ({theBook, setLoading}:BookDetailsProps)=>{
             
             if(urlParts != undefined){
                 let titlePage = urlParts[urlParts.length-1]
-                
                 let url = urlParts.slice(0, 3).join("/")
                 axios.get<WikiResponse>(url+"/api/rest_v1/page/summary/"+titlePage)
                 .then((resDes)=>{
-                    console.log("BOOOKDETAILS", resDes.data);
+
                     setWDescription(resDes.data.extract)
                     setWImage(resDes.data.originalimage.source)
                 })
@@ -147,7 +152,7 @@ const BookDetails = ({theBook, setLoading}:BookDetailsProps)=>{
             <section id="bookPresentation">
                 <img src={image} alt="" />
                 <section id="titleDescription">
-                    <h1 className="display-1 text-center"><b>{title}</b></h1>
+                    <h1 className="display-1 text-center" data-cy="title"><b>{title}</b></h1>
                     <div className="text-center display-6 date">{creationDate}</div>
                     
                     <div className="text-center">{description}</div>
@@ -160,12 +165,12 @@ const BookDetails = ({theBook, setLoading}:BookDetailsProps)=>{
             <button className = {"btn btn-outline-success my-2 my-sm-0 "+(authorsOpen==true?"invisible":"visible")} onClick={()=>{setAuthorsOpen(true);document.querySelector(".loadA")?.remove()}}>Load Authors</button>
             <section id="authors">
                 {authorsOpen && theBook?.author_key?.map( (key, index)=>(
-                    <Author key={key+"-"+index} author_key={key}/>
+                    <Author key={key+"-"+index} setError={setError} author_key={key}/>
                 ))}
             </section>
 
 
-            <h1 className={"display-5 title"}><b>Subjects</b></h1>
+            <h1 className={"display-5 title"}><b>Thèmes</b></h1>
             <section id="subjects">
                 {subjects?.map( (subject, index)=>(
                     <Subject key={subject+"-"+index} subject={subject}/>
@@ -176,11 +181,11 @@ const BookDetails = ({theBook, setLoading}:BookDetailsProps)=>{
             <button className = {"btn btn-outline-success my-2 my-sm-0 "+(editionsOpen==true?"invisible":"visible")} onClick={(e)=>{setEditionsOpen(true);document.querySelector(".loadE")?.remove()}}>Load Editions</button>
             <section id="editions">
                 {editionsOpen && theBook?.edition_key?.map( (edition_key, index)=>
-                    index>0 && index<=20 && <Edition key={edition_key+"-"+index} edition_key={edition_key}/>
+                    index>=0 && index<=20 && <Edition setError={setError} key={edition_key+"-"+index} edition_key={edition_key}/>
                 )}
             </section>
 
-            <h1 className={"display-5 title "+(showWiki==true?"visible":"invisible")}><b>Données de Wikipédia :</b></h1>
+            <h1 data-cy="wiki" className={"display-5 title "+(showWiki==true?"visible":"invisible")}><b>Données de Wikipédia :</b></h1>
             <section id="bookPresentation" className={(showWiki==true?"visible":"invisible")}>
                 <img src={wImage} alt="" />
                 <section id="titleDescription">

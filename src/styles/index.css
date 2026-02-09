@@ -26,6 +26,11 @@ img{
     z-index: 1000;
 }
 
+.topBar>div{
+    width:100%;
+    display: contents;
+}
+
 #loading{
     background-color: #0000001a;
     display: flex;
@@ -59,14 +64,16 @@ img{
     margin:2%;
 }
 
-#searchSection>.content{
+#searchSection>.content>div{
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-#searchSection>.content>form{
+
+
+#searchSection>.content>div>form{
     width: 100%;
     padding: 3%;
     padding-top:0%;

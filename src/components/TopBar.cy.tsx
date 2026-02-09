@@ -8,13 +8,14 @@ describe('<TopBar />', () => {
     const setBook = cy.stub()
     const setLoading = cy.stub()
     const setArrowsVisibles = cy.stub()
+    const setError = cy.stub()
 
     cy.mount(
       <BrowserRouter>
-        <TopBar setBook={setBook} setLoading={setLoading} setArrowsVisibles={setArrowsVisibles}/>
+        <TopBar setError = {setError} setBook={setBook} setLoading={setLoading} setArrowsVisibles={setArrowsVisibles}/>
       </BrowserRouter>
     )
-    return {setBook, setLoading, setArrowsVisibles}
+    return {setBook, setLoading, setArrowsVisibles, setError}
   }
 
   beforeEach(()=>{
@@ -58,8 +59,7 @@ describe('<TopBar />', () => {
     cy.get(".searchInput").type("Test")
     cy.wrap(axios.get).should("have.been.calledOnce")
     
-    cy.get(".quickSearch")
-    .should("have.class", "show")
+    cy.get(".quickSearch").should("have.class", "show")
 
     cy.contains("Work Title Test").should("exist")
     cy.contains("Test test").should("exist")
@@ -83,5 +83,19 @@ describe('<TopBar />', () => {
     cy.get("button[type=submit]").click()
 
     cy.location("pathname").should("eq", "/detailed-search/Test")
+  })
+
+  it("should hide the quick result ul", ()=>{
+    mountTopBar()
+
+    cy.get(".searchInput").type("Test")
+    cy.get(".topBar").click()
+
+    cy.get(".quickSearch").should("have.class", "invisible")
+
+    cy.get(".searchInput").type("Tests")
+    cy.get("button[type=submit]").click()
+
+    cy.get(".quickSearch").should("have.class", "invisible")
   })
 })

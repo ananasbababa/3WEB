@@ -13,6 +13,7 @@ type DetailedSearchProps = {
     setBook:(book:BookType)=>void,
     setArrowsVisibles:(visible:boolean)=>void,
     setLoading:(loading:boolean)=>void,
+    setError:(message:string)=>void,
     pageNumber:number
 }
 
@@ -28,7 +29,7 @@ type ResponseSubjectsType={
   docs : SubjectType[]
 }
 
-const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : DetailedSearchProps) => {
+const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber, setError} : DetailedSearchProps) => {
     const { query } = useParams<{ query: string }>()
     const [titleQuery, setTitleQuery] = useState<string>("")
     const [authorQuery, setAuthorQuery] = useState<string>("")
@@ -44,25 +45,42 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
     
     const navigate = useNavigate()
 
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
+    useEffect(()=>{
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+
+        if(query != undefined){
+            if(query.length<3){
+                navigate("/")
+            }
+            else{   
+                var searchInput:HTMLInputElement|null = document.querySelector(".searchInput")
+                if(searchInput){
+                    searchInput.value = query
+                }
+            }
+        }
+    }, [])
 
     useEffect(()=>{
-        
-
             setLoading(true)
             setArrowsVisibles(true)
 
             if(show=="books"){
                 axios.get<ResponseBooksType>("/openlibrary/search.json?q="+query+"&fields=key,author_key,author_name,edition_key,links,cover_i,title&limit=10&page="+pageNumber)
                 .then((res)=>{
-                    setBooks(res.data.docs)
+                    if(!res.data || !Array.isArray(res.data.docs)){
+                        setError("Erreur API")
+                        throw new Error("Format de données invalide")
+                    }else{
+                        setBooks(res.data.docs)
+                    }
                 })
                 .catch((err)=>{
                     if(isAxiosError(err)){
-                        console.log("Err : ", err)
+                        setError(err.message)
                     }
                 }) 
                 .finally(()=>{
@@ -72,11 +90,16 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
             else if(show=="authors"){
                 axios.get<ResponseAuthorsType>("/openlibrary/search/authors.json?q='"+query+"'&fields=key&limit=10&page="+pageNumber)
                 .then((res)=>{
-                    setAuthors([...new Set(res.data.docs)])
+                    if(!res.data || !Array.isArray(res.data.docs)){
+                        setError("Erreur API")
+                        throw new Error("Format de données invalide")
+                    }else{
+                        setAuthors([...new Set(res.data.docs)])
+                    }
                 })
                 .catch((err)=>{
                     if(isAxiosError(err)){
-                        console.log("Err : ", err)
+                        setError(err.message)
                     }
                 }) 
                 .finally(()=>{
@@ -86,11 +109,16 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
             else if(show=="subjects"){
                 axios.get<ResponseSubjectsType>("/openlibrary/search/subjects.json?q='"+query+"'&fields=key,name&limit=50&page="+pageNumber)
                 .then((res)=>{
-                    setSubjects([...new Set(res.data.docs)])
+                    if(!res.data || !Array.isArray(res.data.docs)){
+                        setError("Erreur API")
+                        throw new Error("Format de données invalide")
+                    }else{
+                        setSubjects([...new Set(res.data.docs)])
+                    }
                 })
                 .catch((err)=>{
                     if(isAxiosError(err)){
-                        console.log("Err : ", err)
+                        setError(err.message)
                     }
                 }) 
                 .finally(()=>{
@@ -103,6 +131,12 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
         
     }, [query, show, pageNumber])
 
+    useEffect(()=>{
+        if(show=="deepSearch"){
+            resetDatas()
+        }
+    }, [show])
+
     const detailledSearch = (e:React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
         let q = ""
@@ -113,18 +147,36 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
                 q+=textValues[index]+":"+value+"+"
             }
         })
+        var searchInput:HTMLInputElement|null = document.querySelector(".searchInput")
+        if(searchInput){
+            searchInput.value = q
+        }
         navigate("/detailed-search/"+q)
         setShow("books")
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    }
+
+    const resetDatas = ()=>{
+        setTitleQuery("")
+        setAuthorQuery("")
+        setCharacQuery("")
+        setEditorQuery("")
+        setIsbnQuery("")
+        setSubjectQuery("")
+        setPlaceQuery("")
     }
 
     return (
         <section id="searchSection">
             <nav className="navbar">
                 <form className="container-fluid justify-content-center">
-                    <button type="button" className={"btn "+ (show=="books"?"btn-success":"btn-light") +" subjectButton"} onClick={()=>{setShow("books");}}>Livres</button>
-                    <button type="button" className={"btn "+ (show=="authors"?"btn-success":"btn-light") +" subjectButton"}  onClick={()=>{setShow("authors");}}>Auteurs</button>
-                    <button type="button" className={"btn "+ (show=="subjects"?"btn-success":"btn-light") +" subjectButton"}  onClick={()=>{setShow("subjects");}}>Thèmes</button>
-                    <button type="button" className={"btn "+ (show=="deepSearch"?"btn-success":"btn-light") +" subjectButton"}  onClick={()=>{setShow("deepSearch");}}>Recherche avancée</button>
+                    <button type="button" className={"btn "+ (show=="books"?"btn-success":"btn-secondary") +" subjectButton"} onClick={()=>{setShow("books");}}>Livres</button>
+                    <button type="button" className={"btn "+ (show=="authors"?"btn-success":"btn-secondary") +" subjectButton"}  onClick={()=>{setShow("authors");}}>Auteurs</button>
+                    <button type="button" className={"btn "+ (show=="subjects"?"btn-success":"btn-secondary") +" subjectButton"}  onClick={()=>{setShow("subjects");}}>Thèmes</button>
+                    <button type="button" className={"btn "+ (show=="deepSearch"?"btn-success":"btn-secondary") +" subjectButton"}  onClick={()=>{setShow("deepSearch");}}>Recherche avancée</button>
                 </form>
             </nav>
             <section className="content">
@@ -138,7 +190,7 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
                 <div data-cy="authors-list">
                 {
                     show == "authors" && authors.map((author, index)=>(
-                    <Author author_key = {author.key} key={index+"-"+author.key}/>
+                    <Author author_key = {author.key} key={index+"-"+author.key} setError={setError}/>
                 ))}
                 </div>
 
@@ -149,6 +201,7 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
                 ))}
                 </div>
 
+                <div data-cy="deepSearch">
                 {
                     show == "deepSearch" && <form>
                         <div className="mb-3" data-cy="deepSearchTitle">
@@ -189,6 +242,8 @@ const DetailedSearch = ({setBook, setArrowsVisibles, setLoading, pageNumber} : D
                         <button onClick={(e)=>detailledSearch(e)} className="btn btn-outline-success my-2 my-sm-0" data-cy="submitDeepSearch">Search</button>
                     </form>
                 }
+                </div>
+
             </section>
         </section>
     )

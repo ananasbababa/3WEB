@@ -5,5 +5,5 @@ export type EditionType = {
     nbPages:number,
     fullTitle:string,
     publishDate:string,
-    publishers:string[],
+    publishers:string[]
 }
